@@ -3,8 +3,16 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
-# Introdução
-O conversor de moedas CoinVert é uma aplicação simples desenvolvida para consolidar alguns conhecimentos obtidos no curso de Java da Alura em parceria com a ONE (Oracle Next Education). O conversor consome a API externa ExchangeRate. (https://www.exchangerate-api.com/)
+## Introdução 
+
+O CoinVert é um programa simples, desenvolvido em Java, que permite a conversão de valores entre diferentes moedas de forma rápida e fácil. Para  isso, o usuário deve apenas escolher uma das opções de conversão do menu e informar o valor que deseja converter. Além das opções pré-definidas no menu, há uma opção em que o usuário pode simplesmente digitar o código da moeda base e da moeda alvo. 
+
+Esse aplicativo foi criado com o intuito de cumprir um desafio proposto durante o curso de Java da Alura em parceria com a ONE (Oracle Next Education) e consolidar os conhecimentos obtidos até essa etapa do curso.
+
+  <div style="flex: 1; text-align: center;">
+    <img alt="Badge ONE (Oracle Next Education)" height="300" src="https://i.imgur.com/mjWiHki.png">
+  </div>
+
 
 ## Stack utilizada
 
@@ -19,9 +27,8 @@ O conversor de moedas CoinVert é uma aplicação simples desenvolvida para cons
 
 ## Funcionalidades
 
-- Realizar a conversão de moedas pré-definidas em um menu de navegação
-- Realizar a conversão de moedas através de códigos de moeda inseridos pelo usuário
-- Mostrar códigos de moeda suportados pela API
+- Conversão de moedas utilizando a API Externa [ExchangeRate](https://www.exchangerate-api.com/)
+- Suporte para várias moedas, incluindo Dólar, Peso Argentino, Real Brasileiro, Peso Colombiano e muito mais
 
 ## Variáveis de Ambiente
 
@@ -41,13 +48,17 @@ Para rodar esse projeto, você vai precisar obter uma chave no site da API exter
 
 3) Instale as dependências
 
-4) Execute o programa
+4) Execute a classe Main presente no diretório
 
 
 ## CoinVert em Funcionamento
 
 ![App Screenshot](https://i.imgur.com/1vC7IFQ.gif)
 
+
+## Códigos de Moeda Suportados
+
+A lista de códigos de moeda suportados pode ser acessada no site da API Externa Exchange Rate ([clique aqui](https://www.exchangerate-api.com/docs/supported-currencies))
 
 ## Sugestões de Melhorias
 
