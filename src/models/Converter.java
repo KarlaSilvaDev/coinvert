@@ -1,79 +1,87 @@
 package models;
 
 import com.google.gson.Gson;
-
+import exceptions.ExchangeRateAPIException;
+import io.github.cdimascio.dotenv.Dotenv;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.Scanner;
 
-public class Converter {
-    private String baseCode;
-    private String targetCode;
 
-    public void showMenu(){
-        System.out.println("""
-                    ****************************************
-                    Seja bem-vindo(a) ao conversor de moedas!
-                                          
-                    1) Dólar -> Peso Argentino
-                    2) Peso Argentino -> Dólar
-                    3) Dólar -> Real Brasileiro
-                    4) Real Brasileiro -> Dolar
-                    5) Dólar -> Peso Colombiano
-                    6) Peso Colombiano -> Dólar
-                    7) Sair
-                                            
-                    Escolha uma opção válida:
-                    """);
+public class ExchangeRateAPI {
+    private final HttpClient httpClient;
+    private final Gson gson;
+    private final String apiKey;
+
+    public ExchangeRateAPI() {
+        this.httpClient = HttpClient.newHttpClient();
+        this.gson = new Gson();
+        this.apiKey = Dotenv.load().get("API_KEY");
     }
 
-    public String convertCurrency(double value, int option){
-        try {
-            switch (option){
-            case 1:
-                this.baseCode = "USD";
-                this.targetCode = "ARS";
+    private HttpResponse<String> sendRequest(String url) throws IOException, InterruptedException {
+        URI link = URI.create(url);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(link)
+                .build();
+        return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    public Map<String, String> getSupportedCodes() throws IOException, InterruptedException {
+        String API_BASE_URL = "https://v6.exchangerate-api.com/v6/" + this.apiKey + "/codes";
+        HttpResponse<String> response = sendRequest(API_BASE_URL);
+        return this.gson.fromJson(response.body(), ExchangeRateResponse.class).supported_codes();
+    }
+
+    public String readAndValidateCurrencyCode(String message) throws IOException, InterruptedException {
+        Map<String, String> supportedCurrencyCodes = this.getSupportedCodes();
+        Scanner scanner = new Scanner(System.in);
+        String currencyCode;
+
+        while(true){
+            System.out.println(message);
+            currencyCode = scanner.next();
+
+            if(supportedCurrencyCodes.containsKey(currencyCode)){
                 break;
-            case 2:
-                this.baseCode = "ARS";
-                this.targetCode = "USD";
-                break;
-            case 3:
-                this.baseCode = "USD";
-                this.targetCode = "BRL";
-                break;
-            case 4:
-                this.baseCode = "BRL";
-                this.targetCode = "USD";
-                break;
-            case 5:
-                this.baseCode = "USD";
-                this.targetCode = "COP";
-                break;
-            case 6:
-                this.baseCode = "COP";
-                this.targetCode = "USD";
-                break;
+            }
+
+            System.out.println("Código de moeda informado é inválido ou não é suportado pela API. Tente novamente.");
         }
 
-            String apiKey = "6b04a4b029d7c1a522deab04";
-            URI link = URI.create("https://v6.exchangerate-api.com/v6/"+ apiKey + "/pair/" + baseCode + "/" + targetCode);
+        return currencyCode ;
+    }
 
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(link)
-                    .build();
+    public double getConversionRate(String baseCode, String targetCode){
+        try {
+            String API_BASE_URL = "https://v6.exchangerate-api.com/v6/"+ this.apiKey + "/pair/" + baseCode + "/" + targetCode;
+            HttpResponse<String> response = sendRequest(API_BASE_URL);
 
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.body().contains("\"error-type\":\"invalid-key\"")){
+                throw new ExchangeRateAPIException("Chave de API (API Key) inválida.");
+            }
+
+            if (response.body().contains("\"error-type\":\"quota-reached\"")){
+                throw new ExchangeRateAPIException("Número de requisições máximas do plano atingido.");
+            }
+
+            if (response.body().contains("\"error-type\":\"inactive-account\"")){
+                throw new ExchangeRateAPIException("Conta inativa.");
+            }
 
             Gson gson = new Gson();
-            ExchangeRateResponse exchangeRateResponse = gson.fromJson(response.body(), ExchangeRateResponse.class);
+            return gson.fromJson(response.body(), ExchangeRateResponse.class).conversion_rate();
 
-            return String.format("%.2f %s = %.2f %s", value, baseCode, value * exchangeRateResponse.conversion_rate(),targetCode);
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            System.out.println("Erro ao acessar a API Exchange Rate: " + e.getMessage());
+            return -1;
+        } catch (ExchangeRateAPIException e){
+            System.out.println("ERRO: " + e.getMessage());
+            return -1;
         }
     }
 }
