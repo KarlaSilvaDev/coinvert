@@ -1,7 +1,7 @@
 package exceptions;
 
-public class UnsupportedCodeException extends RuntimeException {
-    public UnsupportedCodeException(String message) {
+public class ExchangeRateAPIException extends RuntimeException {
+    public ExchangeRateAPIException(String message) {
         super(message);
     }
 }
