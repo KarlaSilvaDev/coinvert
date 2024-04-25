@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.Scanner;
 
 
-public class ExchangeRateAPI {
+public class Converter {
     private final HttpClient httpClient;
     private final Gson gson;
     private final String apiKey;
 
-    public ExchangeRateAPI() {
+    public Converter() {
         this.httpClient = HttpClient.newHttpClient();
         this.gson = new Gson();
         this.apiKey = Dotenv.load().get("API_KEY");
@@ -37,26 +37,7 @@ public class ExchangeRateAPI {
         return this.gson.fromJson(response.body(), ExchangeRateResponse.class).supported_codes();
     }
 
-    public String readAndValidateCurrencyCode(String message) throws IOException, InterruptedException {
-        Map<String, String> supportedCurrencyCodes = this.getSupportedCodes();
-        Scanner scanner = new Scanner(System.in);
-        String currencyCode;
-
-        while(true){
-            System.out.println(message);
-            currencyCode = scanner.next();
-
-            if(supportedCurrencyCodes.containsKey(currencyCode)){
-                break;
-            }
-
-            System.out.println("Código de moeda informado é inválido ou não é suportado pela API. Tente novamente.");
-        }
-
-        return currencyCode ;
-    }
-
-    public double getConversionRate(String baseCode, String targetCode){
+    private double getConversionRate(String baseCode, String targetCode){
         try {
             String API_BASE_URL = "https://v6.exchangerate-api.com/v6/"+ this.apiKey + "/pair/" + baseCode + "/" + targetCode;
             HttpResponse<String> response = sendRequest(API_BASE_URL);
@@ -83,5 +64,38 @@ public class ExchangeRateAPI {
             System.out.println("ERRO: " + e.getMessage());
             return -1;
         }
+    }
+
+    public String readAndValidateCurrencyCode(String message) throws IOException, InterruptedException {
+        Map<String, String> supportedCurrencyCodes = this.getSupportedCodes();
+        Scanner scanner = new Scanner(System.in);
+        String currencyCode;
+
+        while(true){
+            System.out.println(message);
+            currencyCode = scanner.next();
+
+            if(supportedCurrencyCodes.containsKey(currencyCode)){
+                break;
+            }
+
+            System.out.println("Código de moeda informado é inválido ou não é suportado pela API. Tente novamente.");
+        }
+
+        return currencyCode ;
+    }
+
+    public String convertCurrency(double value, String baseCode, String targetCode ){
+        double conversionRate = this.getConversionRate(baseCode, targetCode);
+        return String.format("""
+                                --------------------------
+                                        RESULTADO
+                                --------------------------
+                                Valor informado: %.2f %s;
+                                Taxa de conversão: %.4f;
+                                Resultado: %.2f %s
+                                --------------------------
+                                %n"""
+                , value, baseCode, conversionRate, value*conversionRate,targetCode);
     }
 }

@@ -1,4 +1,6 @@
 package models;
 
-public record ExchangeRateResponse(String base_code, String target_code, double conversion_rate) {}
+import java.util.Map;
+
+public record ExchangeRateResponse(double conversion_rate, Map<String, String> supported_codes) {}
 
