@@ -48,13 +48,21 @@ Para rodar esse projeto, você vai precisar obter uma chave no site da API exter
 
 ![App Screenshot](https://i.imgur.com/1vC7IFQ.gif)
 
-## Feedback
 
-Se você tiver algum feedback, por favor me deixe saber por meio de karlasilvaeng@gmail.com
+## Sugestões de Melhorias
+
+ - Histórico de Conversões: Adicionar a capacidade de rastrear e exibir o histórico das últimas conversões realizadas, oferecendo aos usuários uma visão completa de suas atividades.
+
+ - Registros de Logs: Utilizar as funções da biblioteca java.time para criar registros das conversões realizadas, incluindo informações sobre quais moedas foram convertidas e em que momento.
 
 ## Contribuindo
 
 Pull-requests são bem-vindas. Para mudanças importantes, abra uma issue primeiro
 para discutir o que você gostaria de mudar.
+
+## Feedback
+
+Se você tiver algum feedback, por favor me deixe saber por meio de karlasilvaeng@gmail.com
+
 
 
