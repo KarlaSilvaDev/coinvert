@@ -48,3 +48,13 @@ Para rodar esse projeto, você vai precisar obter uma chave no site da API exter
 
 ![App Screenshot](https://i.imgur.com/1vC7IFQ.gif)
 
+## Feedback
+
+Se você tiver algum feedback, por favor me deixe saber por meio de karlasilvaeng@gmail.com
+
+## Contribuindo
+
+Pull-requests são bem-vindas. Para mudanças importantes, abra uma issue primeiro
+para discutir o que você gostaria de mudar.
+
+
